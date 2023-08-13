@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
+    id("com.google.cloud.tools.jib")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     kotlin("jvm")
@@ -10,12 +11,37 @@ plugins {
 group = "dev.omarevans"
 version = "0.0.1-SNAPSHOT"
 
+val jvmVersion: String by project
+
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.toVersion(jvmVersion)
 }
 
 repositories {
     mavenCentral()
+}
+
+jib {
+    from {
+        val jvmVersion: String by project
+        val baseImage = "eclipse-temurin:${jvmVersion}-jdk"
+        image = baseImage
+        platforms {
+            platform {
+                os = "linux"
+                architecture = "amd64"
+            }
+            platform {
+                os = "linux"
+                architecture = "arm64"
+            }
+        }
+    }
+
+    to {
+        val containerImageRepo: String by project
+        image = "${containerImageRepo}/${project.name}"
+    }
 }
 
 dependencies {
@@ -40,7 +66,7 @@ dependencies {
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs += "-Xjsr305=strict"
-        jvmTarget = "17"
+        jvmTarget = jvmVersion
     }
 }
 
