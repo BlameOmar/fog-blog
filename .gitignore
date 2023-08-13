@@ -1,0 +1,46 @@
+# Operating System Files
+
+## macOS
+.DS_Store
+
+## Windows
+Thumbs.db
+Thumbs.db:encryptable
+[Dd]esktop.ini
+
+
+# Generated Files
+.gradle/
+bin/
+build/
+out/
+target/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+!**/src/main/**/build/
+!**/src/test/**/build/
+!**/src/main/**/out/
+!**/src/test/**/out/
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+
+# Development Tools
+
+## JetBrains IDEs
+.idea/
+*.iws
+*.iml
+*.ipr
+
+## VS Code
+.vscode/
+
+## STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
