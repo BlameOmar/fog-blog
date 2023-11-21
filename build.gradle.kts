@@ -1,3 +1,5 @@
+import com.google.cloud.tools.jib.gradle.BuildDockerTask
+import com.google.cloud.tools.jib.gradle.BuildImageTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -26,21 +28,44 @@ jib {
         val jvmVersion: String by project
         val baseImage = "eclipse-temurin:${jvmVersion}-jdk"
         image = baseImage
-        platforms {
-            platform {
-                os = "linux"
-                architecture = "amd64"
-            }
-            platform {
-                os = "linux"
-                architecture = "arm64"
-            }
-        }
     }
 
     to {
         val containerImageRepo: String by project
         image = "${containerImageRepo}/${project.name}"
+    }
+}
+
+tasks.withType<BuildImageTask>().configureEach {
+    jib {
+        from {
+            platforms {
+                platform {
+                    os = "linux"
+                    architecture = "amd64"
+                }
+                platform {
+                    os = "linux"
+                    architecture = "arm64"
+                }
+            }
+        }
+    }
+}
+
+tasks.withType<BuildDockerTask>().configureEach {
+    jib {
+        from {
+            platforms {
+                platform {
+                    architecture = when (System.getProperty("os.arch")) {
+                        "aarch64" -> "arm64"
+                        else -> "amd64"
+                    }
+                    os = "linux"
+                }
+            }
+        }
     }
 }
 
