@@ -5,7 +5,7 @@ spring:
 blog-database:
   host: ${BLOG_DATABASE_HOST:localhost}
   port: ${BLOG_DATABASE_PORT:5432}
-  name: ${BLOG_DATABASE_NAME:fog-blog}
-  user: ${BLOG_DATABASE_ROLE:${USER:fog-blog}}
-  password: ${BLOG_DATABASE_PASSWORD:""}
+  name: ${BLOG_DATABASE_NAME:app}
+  user: ${BLOG_DATABASE_ROLE:app}
+  password: ${BLOG_DATABASE_PASSWORD:insecure-app-user-password}
   enable-ssl: false

@@ -1,0 +1,4 @@
+services:
+  postgresql:
+    ports:
+      - '${DOCKER_HOST_IP:-0.0.0.0}:5432:5432'

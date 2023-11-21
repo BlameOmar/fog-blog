@@ -1,0 +1,54 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20231121.0001-add-user-table.yaml
+      author: fog-blog
+      changes:
+        - createTable:
+            schemaName: user
+            tableName: user
+            remarks: This table records user account information.
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: text
+                  constraints:
+                    nullable: false
+                  remarks: This is the user's preferred name.
+              - column:
+                  name: email_address
+                  type: citext
+                  constraints:
+                    unique: true
+                    nullable: false
+                  remarks: This is the user's primary email address. It is the address that will be used for account related communication.
+              - column:
+                  name: username
+                  type: citext
+                  constraints:
+                    unique: true
+                    nullable: false
+                  remarks: This is the unique human-readable identifier chosen by the user.
+              - column:
+                  name: password_hash
+                  type: text
+                  constraints:
+                    nullable: false
+                  remarks: This is the hash of the user's password.
+              - column:
+                  name: created_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: timestamp with time zone
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted_at
+                  type: timestamp with time zone

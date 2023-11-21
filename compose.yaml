@@ -1,0 +1,69 @@
+name: fog-blog
+
+services:
+  postgresql:
+    image: postgres:16.1-alpine
+
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 5s
+      timeout: 2s
+
+    environment:
+      FOG_BLOG_POSTGRESQL_APP_USER_PASSWORD_FILE: /run/secrets/postgresql-app-user-password
+      FOG_BLOG_POSTGRESQL_LIQUIBASE_USER_PASSWORD_FILE: /run/secrets/postgresql-liquibase-user-password
+      FOG_BLOG_POSTGRESQL_SUPERUSER_PASSWORD_FILE: /run/secrets/postgresql-superuser-password
+
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgresql-superuser-password
+
+    secrets:
+      - postgresql-app-user-password
+      - postgresql-liquibase-user-password
+      - postgresql-superuser-password
+
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+      - ./docker/bind-mounts/postgresql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+
+    profiles:
+      - ""
+      - "infra"
+      - "postgres"
+
+  liquibase:
+    image: liquibase/liquibase:4.25-alpine
+    command: [ update, --log-level, info, --changeLogFile=changelog-list.yaml ]
+
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+    environment:
+      LIQUIBASE_COMMAND_URL: jdbc:postgresql://postgresql:5432/app
+      LIQUIBASE_COMMAND_USERNAME: liquibase
+      LIQUIBASE_COMMAND_PASSWORD_FILE: /run/secrets/postgresql-liquibase-user-password
+      LIQUIBASE_LIQUIBASE_SCHEMA_NAME: liquibase
+
+    secrets:
+      - postgresql-liquibase-user-password
+
+    volumes:
+      - ./liquibase/db/changelog:/liquibase/changelog
+      - ./liquibase/docker-entrypoint.sh:/liquibase/docker-entrypoint.sh
+
+    profiles:
+      - ""
+      - "infra"
+      - "postgres"
+
+volumes:
+  postgresql-data:
+    driver: local
+
+secrets:
+  postgresql-app-user-password:
+    file: docker/insecure-secrets/postgresql-app-user-password
+  postgresql-liquibase-user-password:
+    file: docker/insecure-secrets/postgresql-liquibase-user-password
+  postgresql-superuser-password:
+    file: docker/insecure-secrets/postgresql-superuser-password
