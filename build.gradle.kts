@@ -6,6 +6,7 @@ plugins {
     id("com.google.cloud.tools.jib")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
+    `jvm-test-suite`
     kotlin("jvm")
     kotlin("plugin.spring")
 }
@@ -81,11 +82,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.postgresql:postgresql")
     implementation("org.postgresql:r2dbc-postgresql")
-
-    testImplementation("io.projectreactor:reactor-test")
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 tasks.withType<KotlinCompile> {
@@ -95,6 +91,17 @@ tasks.withType<KotlinCompile> {
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+
+            dependencies {
+                implementation("io.projectreactor:reactor-test")
+                implementation("org.junit.jupiter:junit-jupiter")
+                implementation("org.springframework.boot:spring-boot-starter-test")
+                runtimeOnly("org.junit.platform:junit-platform-launcher")
+            }
+        }
+    }
 }
