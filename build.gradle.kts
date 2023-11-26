@@ -27,7 +27,7 @@ repositories {
 jib {
     from {
         val jvmVersion: String by project
-        val baseImage = "eclipse-temurin:${jvmVersion}-jdk"
+        val baseImage = "eclipse-temurin:${jvmVersion}-jdk-alpine"
         image = baseImage
     }
 
